@@ -109,10 +109,6 @@ func (s *SpanTable) TableName() string {
 	return "appdash_spans"
 }
 
-func (s *SpanTable) To() string {
-	return "appdash_spans"
-}
-
 func (s *SpanTable) BeforeInsert() {
 	s.CreatedAt = MsTimestampNow()
 	s.UpdatedAt = s.CreatedAt
