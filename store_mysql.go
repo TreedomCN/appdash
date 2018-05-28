@@ -7,8 +7,8 @@ import (
 	"github.com/go-xorm/xorm"
 	"fmt"
 	"github.com/go-xorm/core"
-	"github.com/chanxuehong/wechat/json"
 	"database/sql"
+	"encoding/json"
 )
 
 func MsTimestampNow() int64 {
