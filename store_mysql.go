@@ -1,10 +1,3 @@
-/*
-* File:    sotre_mysql.go
-* Created: 2018-05-27 17:02
-* Authors: MS geek.snail@qq.com
-* Copyright (c) 2013 - 2018 青木文化传播有限公司 版权所有
-*/
-
 package appdash
 
 import (
