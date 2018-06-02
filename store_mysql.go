@@ -177,10 +177,10 @@ func (s *MySQLStore) Collect(id SpanID, as ...Annotation) error {
 			if v.Key == "ClientRecv" {
 				t.Recv, _ = time.Parse("2006-01-02T15:04:05.999999999-07:00", string(v.Value))
 			}
-			if v.Key == "Server.Recv" {
+			if v.Key == "Server.Send" {
 				t.Send, _ = time.Parse("2006-01-02T15:04:05.999999999-07:00", string(v.Value))
 			}
-			if v.Key == "Server.Send" {
+			if v.Key == "Server.Recv" {
 				t.Recv, _ = time.Parse("2006-01-02T15:04:05.999999999-07:00", string(v.Value))
 			}
 			content[v.Key] = string(v.Value)
@@ -204,6 +204,11 @@ func insertSpan(t SpanTable) (r SpanTable, err error) {
 		parent SpanTable
 		trace  TraceTable
 	)
+RETRY:
+	err = DBXorm.Ping()
+	if err != nil && err.Error() == "invalid connection" {
+		goto RETRY
+	}
 	_, err = DBXorm.Where("span_key=?", t.SpanKey).Get(&r)
 	if r.Id > 0 {
 		return
@@ -247,6 +252,11 @@ func (s *MySQLStore) Traces(opts TracesOpts) ([]*Trace, error) {
 }
 
 func recursiveHandleSpan(rootKey string) (parent []*Trace, err error) {
+RETRY:
+	err = DBXorm.Ping()
+	if err != nil && err.Error() == "invalid connection" {
+		goto RETRY
+	}
 	var spans = make([]*SpanTable, 0, 0)
 	err = DBXorm.Where("parent_span_key=?", rootKey).OrderBy("client_send DESC").Limit(20, 0).Find(&spans)
 	if err != nil && err != sql.ErrNoRows {
