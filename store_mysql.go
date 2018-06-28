@@ -161,7 +161,6 @@ func (s *MySQLStore) Collect(id SpanID, as ...Annotation) error {
 	//log.Printf("Collect id Trace:%v", id.Trace)
 	//log.Printf("Collect id Span:%v", id.Span)
 	//log.Printf("Collect id Parent:%v", id.Parent)
-
 	t := SpanTable{}
 	t.TraceKey = id.Trace.String()
 	t.SpanKey = id.Span.String()
@@ -195,8 +194,8 @@ func (s *MySQLStore) Collect(id SpanID, as ...Annotation) error {
 	t.ClientRecv = t.Recv.UnixNano()
 	t.Content = string(byteArr)
 	//log.Printf("span----->:%v\n", t)
-	insertSpan(t)
-	return nil
+	_, err = insertSpan(t)
+	return err
 }
 
 func insertSpan(t SpanTable) (r SpanTable, err error) {
